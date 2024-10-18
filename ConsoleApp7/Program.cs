@@ -110,3 +110,110 @@ class PragueParking
         parkingGarage[currentSpot] = null; // Rensa den gamla platsen
         Console.WriteLine($"Fordonet har flyttats från plats {currentSpot + 1} till plats {newSpot + 1}.");
     }
+
+   // Metod för att hämta ett fordon
+    static void RetrieveVehicle(string[] parkingGarage)
+    {
+        Console.Write("Ange registreringsnummer: "); Console.ForegroundColor = ConsoleColor.Blue;
+        string regNr = Console.ReadLine().ToUpper();
+
+        for (int i = 0; i < parkingGarage.Length; i++)
+        {
+            if (parkingGarage[i] != null && parkingGarage[i].Contains(regNr))
+            {
+                parkingGarage[i] = null;
+                Console.WriteLine($"Fordon med registreringsnummer {regNr} har hämtats från plats {i + 1}.");
+                return;
+            }
+        }
+
+        Console.WriteLine("Fordon hittas Ej.");
+    }
+
+    // Metod för att visa parkeringsstatus
+    static void ShowParkingStatus(string[] parkingGarage)
+    {
+        Console.Clear();
+        Console.WriteLine("Parkeringsstatus:");
+        for (int i = 0; i < parkingGarage.Length; i++)
+        {
+            if (parkingGarage[i] == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Plats {i + 1}: Ledig");
+            }
+            else if (parkingGarage[i].StartsWith("MC") && !parkingGarage[i].Contains("|"))
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Plats {i + 1}: Halvfull (1 MC)");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Plats {i + 1}: Full (Upptagen av {parkingGarage[i]})");
+            }
+            Console.ResetColor();
+        }
+    }
+
+    // Metod för att optimera MC-parkering
+    static void OptimizeMC(string[] parkingGarage)
+    {
+        List<string> workOrders = new List<string>();
+        for (int i = 0; i < parkingGarage.Length; i++)
+        {
+            if (parkingGarage[i] != null && parkingGarage[i].StartsWith("MC") && !parkingGarage[i].Contains("|"))
+            {
+                for (int j = i + 1; j < parkingGarage.Length; j++)
+                {
+                    if (parkingGarage[j] != null && parkingGarage[j].StartsWith("MC") && !parkingGarage[j].Contains("|"))
+                    {
+                        parkingGarage[i] += "|" + parkingGarage[j];
+                        workOrders.Add($"Flytta {parkingGarage[j]} från plats {j + 1} till plats {i + 1}");
+                        parkingGarage[j] = null;
+                        break;
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine("Optimering klar. Arbetsordrar:");
+        foreach (string order in workOrders)
+        {
+            Console.WriteLine(order);
+        }
+    }
+
+    // Metod för att söka efter ett fordon
+    static void SearchVehicle(string[] parkingGarage)
+    {
+        Console.Write("Ange registreringsnummer: ");
+        string regNr = Console.ReadLine().ToUpper();
+
+        for (int i = 0; i < parkingGarage.Length; i++)
+        {
+            if (parkingGarage[i] != null && parkingGarage[i].Contains(regNr))
+            {
+                Console.WriteLine($"Fordonet med registreringsnummer {regNr} står på plats {i + 1}.");
+                return;
+            }
+        }
+
+        Console.WriteLine("Fordon hittas Ej.");
+    }
+
+    // Metod för att läsa in ett giltigt tal med felhantering
+    static int ReadValidNumber(string prompt)
+    {
+        int number;
+        while (true)
+        {
+            Console.Write(prompt);
+            if (int.TryParse(Console.ReadLine(), out number) && number >= 1 && number <= 100)
+            {
+                return number;
+            }
+            Console.WriteLine("Ogiltigt nummer, pröva igen.");
+        }
+    }
+}
