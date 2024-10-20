@@ -86,7 +86,7 @@ class PragueParking
             }
         }
 
-        Console.WriteLine("Inga lediga platser tillgängliga.");
+        Console.WriteLine("Det finns för närvarande inga lediga platser.");
     }
 
     // Metod för att flytta ett fordon
